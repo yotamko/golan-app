@@ -22,6 +22,61 @@
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
+    <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-storage.js";
+  // אופציונלי:
+  // import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-analytics.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAIiGSCKxtVRq6pRTPd3XhLlc4RB1MyXHI",
+    authDomain: "golan-app3.firebaseapp.com",
+    projectId: "golan-app3",
+    storageBucket: "golan-app3.firebasestorage.app",
+    messagingSenderId: "509834213941",
+    appId: "1:509834213941:web:68e89f0c7e15f9744f8f7c",
+    measurementId: "G-96CV5L6SLF"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
+
+  const provider = new GoogleAuthProvider();
+
+  function waitForUser() {
+    return new Promise((resolve) => {
+      onAuthStateChanged(auth, (user) => resolve(user || null));
+    });
+  }
+
+  async function loginWithGoogle() {
+    const res = await signInWithPopup(auth, provider);
+    return res.user;
+  }
+
+  async function cloudLoad(uid) {
+    const snap = await getDoc(doc(db, "users", uid));
+    return snap.exists() ? snap.data() : null;
+  }
+
+  async function cloudSave(uid, payload) {
+    await setDoc(doc(db, "users", uid), payload, { merge: true });
+  }
+
+  async function uploadImage(uid, file) {
+    const path = `users/${uid}/images/${Date.now()}_${file.name}`;
+    const r = ref(storage, path);
+    await uploadBytes(r, file);
+    return await getDownloadURL(r);
+  }
+
+  // חשיפה לריאקט (הסקריפט של Babel)
+  window.__fb = { waitForUser, loginWithGoogle, cloudLoad, cloudSave, uploadImage };
+</script>
     <style>
         body { 
             -webkit-tap-highlight-color: transparent; 
