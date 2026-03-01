@@ -577,7 +577,7 @@
             const [modalOpen, setModalOpen] = useState(false);
             const [editingId, setEditingId] = useState(null);
             const [showMapPicker, setShowMapPicker] = useState(false);
-            const [formData, setFormData] = useState({ locationName: '', coordinates: '', notes: '', image: null });
+            const [formData, setFormData] = useState({ locationName: '', coordinates: '', notes: '', image: null, imageUrl: '' });
 
             const filteredItems = knowledgeItems.filter(item => 
                 (item.locationName && item.locationName.includes(search)) ||
@@ -591,7 +591,8 @@
                     locationName: formData.locationName,
                     coordinates: formData.coordinates,
                     notes: formData.notes,
-                    image: formData.image,
+                    image: (formData.imageUrl || formData.image),
+                    imageUrl: (formData.imageUrl || ''),
                     date: new Date().toLocaleDateString('he-IL')
                 };
 
@@ -601,7 +602,7 @@
                     setKnowledgeItems([newItem, ...knowledgeItems]);
                 }
                 setModalOpen(false);
-                setFormData({ locationName: '', coordinates: '', notes: '', image: null });
+                setFormData({ locationName: '', coordinates: '', notes: '', image: null, imageUrl: '' });
                 setEditingId(null);
             };
 
@@ -633,27 +634,41 @@
                 }
             };
 
-            const handleImageUpload = (e) => {
+            const handleImageUpload = async (e) => {
                 const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        const img = new Image();
-                        img.onload = () => {
-                            const canvas = document.createElement('canvas');
-                            const ctx = canvas.getContext('2d');
-                            const maxWidth = 500; 
-                            const scaleSize = maxWidth / img.width;
-                            canvas.width = maxWidth;
-                            canvas.height = img.height * scaleSize;
-                            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                            setFormData(prev => ({ ...prev, image: canvas.toDataURL('image/jpeg', 0.5) }));
-                        }
-                        img.src = event.target.result;
+                if (!file) return;
+
+                // אם המשתמש מחובר - מעלים ל-Storage ושומרים URL (מסתנכרן בין מכשירים)
+                if (user && window.__fb?.uploadImage) {
+                    try {
+                        const url = await window.__fb.uploadImage(user.uid, file);
+                        setFormData(prev => ({ ...prev, imageUrl: url, image: '' }));
+                        return;
+                    } catch (err) {
+                        console.error('Image upload failed:', err);
+                        alert('העלאת תמונה נכשלה. ודא שהפעלת Storage ב-Firebase ושכללי האבטחה מאפשרים גישה.');
+                        // נמשיך לפולבק מקומי
                     }
-                    reader.readAsDataURL(file);
                 }
-            };
+
+                // פולבק מקומי (לא מסתנכרן): שמירה כ-base64
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        const maxWidth = 500;
+                        const scaleSize = maxWidth / img.width;
+                        canvas.width = maxWidth;
+                        canvas.height = img.height * scaleSize;
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        setFormData(prev => ({ ...prev, image: canvas.toDataURL('image/jpeg', 0.5), imageUrl: '' }));
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }; };
 
             return (
                 <div className="px-4 pb-24 safe-pb fade-in">
@@ -718,7 +733,7 @@
                         ))}
                     </div>
 
-                    <button onClick={() => { setEditingId(null); setFormData({ locationName: '', coordinates: '', notes: '', image: null }); setModalOpen(true); }} className="fixed bottom-6 left-6 w-16 h-16 bg-blue-500 rounded-full shadow-lg flex items-center justify-center text-white active:scale-90 transition-transform z-40">
+                    <button onClick={() => { setEditingId(null); setFormData({ locationName: '', coordinates: '', notes: '', image: null, imageUrl: '' }); setModalOpen(true); }} className="fixed bottom-6 left-6 w-16 h-16 bg-blue-500 rounded-full shadow-lg flex items-center justify-center text-white active:scale-90 transition-transform z-40">
                         <Icons.Plus size={32} />
                     </button>
 
@@ -795,7 +810,49 @@
             });
 
             const [role, setRole] = useState(() => localStorage.getItem('golan_role') || 'technician');
+            const [user, setUser] = useState(null);
+            const [cloudLoaded, setCloudLoaded] = useState(false);
+
             const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+            // התחברות (Google) + טעינת נתונים מהענן
+            useEffect(() => {
+                (async () => {
+                    try {
+                        const u = await window.__fb?.waitForUser?.();
+                        if (u) setUser(u);
+                    } catch (e) {
+                        console.error('Firebase auth init failed:', e);
+                    }
+                })();
+            }, []);
+
+            const handleLogin = async () => {
+                try {
+                    const u = await window.__fb.loginWithGoogle();
+                    setUser(u);
+                } catch (e) {
+                    console.error('Google login failed:', e);
+                    alert('התחברות נכשלה. בדוק שהפעלת Google Sign-In ב-Firebase Authentication.');
+                }
+            };
+
+            useEffect(() => {
+                if (!user || cloudLoaded) return;
+                (async () => {
+                    try {
+                        const data = await window.__fb.cloudLoad(user.uid);
+                        if (data?.tasks) setTasks(data.tasks);
+                        if (data?.knowledgeItems) setKnowledgeItems(data.knowledgeItems);
+                        if (data?.role) setRole(data.role);
+                    } catch (e) {
+                        console.error('Cloud load failed:', e);
+                    } finally {
+                        setCloudLoaded(true);
+                    }
+                })();
+            }, [user, cloudLoaded]);
+
             const [modalOpen, setModalOpen] = useState(false);
             const [editingId, setEditingId] = useState(null);
             const [selectedImage, setSelectedImage] = useState(null);
@@ -809,10 +866,24 @@
                 customer: '', contact: '', area: '', address: '', phone: '', description: '', priority: 'normal', image: null
             });
 
-            // שמירות אוטומטיות
+            // שמירות אוטומטיות (מקומי + ענן)
             useEffect(() => { localStorage.setItem('golan_data_final', JSON.stringify(tasks)); }, [tasks]);
             useEffect(() => { localStorage.setItem('golan_knowledge_v1', JSON.stringify(knowledgeItems)); }, [knowledgeItems]);
             useEffect(() => { localStorage.setItem('golan_role', role); }, [role]);
+
+            // שמירה לענן (רק אחרי שטענו מהענן כדי לא לדרוס אותו עם מצב ריק)
+            useEffect(() => {
+                if (!user || !cloudLoaded) return;
+                const t = setTimeout(() => {
+                    window.__fb.cloudSave(user.uid, {
+                        tasks,
+                        knowledgeItems,
+                        role,
+                        updatedAt: Date.now()
+                    }).catch((e) => console.error('Cloud save failed:', e));
+                }, 500);
+                return () => clearTimeout(t);
+            }, [tasks, knowledgeItems, role, user, cloudLoaded]);
 
             // סגירת תפריט בקליק מחוץ לו
             const menuRef = useRef();
@@ -925,6 +996,14 @@
 
                         {/* צד שמאל - תפריט ממשקים נפתח */}
                         <div className="flex items-center gap-2" ref={menuRef}>
+                            
+                            {!user ? (
+                                <button onClick={handleLogin} className="px-3 py-1.5 rounded-xl bg-blue-600 text-white text-xs font-bold shadow-sm">
+                                    התחבר
+                                </button>
+                            ) : (
+                                <span className="text-xs font-bold text-green-600">מחובר</span>
+                            )}
                             <div className="relative">
                                 <button 
                                     onClick={() => setIsMenuOpen(!isMenuOpen)}
