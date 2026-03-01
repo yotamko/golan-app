@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>גולן סולאר</title>
+    
+    <!-- אייקון מוטמע -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2MCA2MCI+CiAgPCEtLSBXaGl0ZSBCYWNrZ3JvdW5kIGZvciBJY29uIC0tPgogIDxyZWN0IHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgZmlsbD0id2hpdGUiIHJ4PSIxMiIgLz4KICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgwLCAxNSkiPgogICAgPHBhdGggZD0iTTEwIDI1IEwyMCA1IEwzMCAyNSIgc3Ryb2tlPSIjRUFCMzA4IiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgZmlsbD0ibm9uZSIvPgogICAgPHBhdGggZD0iTTI1IDI1IEwzNSA1IEw0NSAyNSIgc3Ryb2tlPSIjODRDQzE2IiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgZmlsbD0ibm9uZSIvPgogICAgPHBhdGggZD0iTTQwIDI1IEw1MCA1IEw2MCAyNSIgc3Ryb2tlPSIjMEVBNUU5IiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgZmlsbD0ibm9uZSIvPgogIDwvZz4KPC9zdmc+">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2MCA2MCI+CiAgPCEtLSBXaGl0ZSBCYWNrZ3JvdW5kIGZvciBJY29uIC0tPgogIDxyZWN0IHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgZmlsbD0id2hpdGUiIHJ4PSIxMiIgLz4KICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgwLCAxNSkiPgogICAgPHBhdGggZD0iTTEwIDI1IEwyMCA1IEwzMCAyNSIgc3Ryb2tlPSIjRUFCMzA4IiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgZmlsbD0ibm9uZSIvPgogICAgPHBhdGggZD0iTTI1IDI1IEwzNSA1IEw0NSAyNSIgc3Ryb2tlPSIjODRDQzE2IiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgZmlsbD0ibm9uZSIvPgogICAgPHBhdGggZD0iTTQwIDI1IEw1MCA1IEw2MCAyNSIgc3Ryb2tlPSIjMEVBNUU5IiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgZmlsbD0ibm9uZSIvPgogIDwvZz4KPC9zdmc+">
+
+    <!-- Leaflet CSS & JS עבור המפה הפנימית -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- ספריות React -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-storage.js";
+  // אופציונלי:
+  // import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-analytics.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAIiGSCKxtVRq6pRTPd3XhLlc4RB1MyXHI",
+    authDomain: "golan-app3.firebaseapp.com",
+    projectId: "golan-app3",
+    storageBucket: "golan-app3.appspot.com",
+    messagingSenderId: "509834213941",
+    appId: "1:509834213941:web:68e89f0c7e15f9744f8f7c",
+    measurementId: "G-96CV5L6SLF"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
+
+  const provider = new GoogleAuthProvider();
+
+  function waitForUser() {
+    return new Promise((resolve) => {
+      onAuthStateChanged(auth, (user) => resolve(user || null));
+    });
+  }
+
+  async function loginWithGoogle() {
+    const res = await signInWithPopup(auth, provider);
+    return res.user;
+  }
+
+  async function cloudLoad(uid) {
+    const snap = await getDoc(doc(db, "users", uid));
+    return snap.exists() ? snap.data() : null;
+  }
+
+  async function cloudSave(uid, payload) {
+    await setDoc(doc(db, "users", uid), payload, { merge: true });
+  }
+
+  async function uploadImage(uid, file) {
+    const path = `users/${uid}/images/${Date.now()}_${file.name}`;
+    const r = ref(storage, path);
+    await uploadBytes(r, file);
+    return await getDownloadURL(r);
+  }
+
+  // חשיפה לריאקט (הסקריפט של Babel)
+  window.__fb = { waitForUser, loginWithGoogle, cloudLoad, cloudSave, uploadImage };
+</script>
+    <style>
+        body { 
+            -webkit-tap-highlight-color: transparent; 
+            background-color: #F8FAFC; 
+            overscroll-behavior-y: none;
+            user-select: none;
+            font-family: sans-serif;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800&display=swap');
+        body { font-family: 'Heebo', sans-serif; }
+        .golan-gradient { background: linear-gradient(90deg, #FACC15 0%, #84CC16 50%, #0EA5E9 100%); }
+        input, textarea, select { font-size: 16px !important; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal-anim { animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .fade-in { animation: fadeIn 0.2s ease-out; }
+        .safe-pb { padding-bottom: env(safe-area-inset-bottom); }
+        .leaflet-container { z-index: 10; font-family: 'Heebo', sans-serif; }
+    </style>
+</head>
+<body class="text-right">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // --- אייקונים ---
+        const Icons = {
+            User: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
+            MapPin: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>,
+            Phone: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>,
+            CheckCircle2: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>,
+            Navigation: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>,
+            ChevronDown: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>,
+            Plus: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>,
+            X: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 18 18"/></svg>,
+            Trash2: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>,
+            Pencil: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>,
+            Globe: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>,
+            Image: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>,
+            RotateCcw: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>,
+            Search: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>,
+            Download: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>,
+            Upload: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>,
+            Book: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>,
+            Target: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="2"/><line x1="12" x2="12" y1="2" y2="6"/><line x1="12" x2="12" y1="18" y2="22"/><line x1="2" x2="6" y1="12" y2="12"/><line x1="18" x2="22" y1="12" y2="12"/></svg>,
+            Copy: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>,
+            Calculator: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>,
+            ArrowRightLeft: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>
+        };
+
+        // --- מודל התראות חלופי ל-Alert / Confirm ---
+        const CustomDialog = ({ dialog, onClose }) => {
+            if (!dialog) return null;
+            return (
+                <div className="fixed inset-0 z-[200] bg-black/50 flex items-center justify-center p-4 fade-in">
+                    <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl modal-anim text-center">
+                        <p className="text-lg font-bold text-slate-800 mb-6 whitespace-pre-wrap">{dialog.message}</p>
+                        <div className="flex gap-3 justify-center">
+                            {dialog.type === 'confirm' && (
+                                <button onClick={() => { dialog.onConfirm(); onClose(); }} className="flex-1 bg-red-500 text-white py-3 rounded-xl font-bold shadow-md active:scale-95 transition-all">
+                                    אישור
+                                </button>
+                            )}
+                            <button onClick={onClose} className={`flex-1 ${dialog.type === 'confirm' ? 'bg-slate-100 text-slate-700' : 'bg-blue-500 text-white'} py-3 rounded-xl font-bold shadow-md active:scale-95 transition-all`}>
+                                {dialog.type === 'confirm' ? 'ביטול' : 'סגור'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- פונקציית המרה ל-UTM ---
+        function latLonToUTM(lat, lon) {
+            const a = 6378137; const eccSquared = 0.00669438; const k0 = 0.9996;
+            let zoneNumber = Math.floor((lon + 180) / 6) + 1;
+            const lonOrigin = (zoneNumber - 1) * 6 - 180 + 3;
+            const lonOriginRad = lonOrigin * (Math.PI / 180);
+            const latRad = lat * (Math.PI / 180); const lonRad = lon * (Math.PI / 180);
+            const eccPrimeSquared = eccSquared / (1 - eccSquared);
+            const N = a / Math.sqrt(1 - eccSquared * Math.pow(Math.sin(latRad), 2));
+            const T = Math.pow(Math.tan(latRad), 2); const C = eccPrimeSquared * Math.pow(Math.cos(latRad), 2);
+            const A = Math.cos(latRad) * (lonRad - lonOriginRad);
+            const M = a * ((1 - eccSquared / 4 - 3 * Math.pow(eccSquared, 2) / 64 - 5 * Math.pow(eccSquared, 3) / 256) * latRad - (3 * eccSquared / 8 + 3 * Math.pow(eccSquared, 2) / 32 + 45 * Math.pow(eccSquared, 3) / 1024) * Math.sin(2 * latRad) + (15 * Math.pow(eccSquared, 2) / 256 + 45 * Math.pow(eccSquared, 3) / 1024) * Math.sin(4 * latRad) - (35 * Math.pow(eccSquared, 3) / 3072) * Math.sin(6 * latRad));
+            let easting = k0 * N * (A + (1 - T + C) * Math.pow(A, 3) / 6 + (5 - 18 * T + Math.pow(T, 2) + 72 * C - 58 * eccPrimeSquared) * Math.pow(A, 5) / 120) + 500000.0;
+            let northing = k0 * (M + N * Math.tan(latRad) * (Math.pow(A, 2) / 2 + (5 - T + 9 * C + 4 * Math.pow(C, 2)) * Math.pow(A, 4) / 24 + (61 - 58 * T + Math.pow(T, 2) + 600 * C - 330 * eccPrimeSquared) * Math.pow(A, 6) / 720));
+            if (lat < 0) northing += 10000000.0;
+            const letters = "CDEFGHJKLMNPQRSTUVWXX";
+            let letterIndex = Math.floor((lat + 80) / 8);
+            if (letterIndex < 0) letterIndex = 0; if (letterIndex > 20) letterIndex = 20;
+            return { easting, northing, zone: zoneNumber, letter: letters.charAt(letterIndex) };
+        }
+
+        const Logo = ({ size = "normal" }) => (
+            <div className={`flex flex-col items-center justify-center select-none ${size === 'small' ? 'scale-75' : ''}`}>
+                <div className="w-16 h-10 relative flex items-center justify-center">
+                   <svg viewBox="0 0 200 100" fill="none" className="w-full h-full" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round">
+                     <path d="M40 80 L70 20 L100 80" stroke="#FAD335" />
+                     <path d="M80 80 L110 20 L140 80" stroke="#84CC16" />
+                     <path d="M120 80 L150 20 L180 80" stroke="#38B6FF" />
+                   </svg>
+                </div>
+                <div className="text-center leading-3 mt-1">
+                    <span className="block text-[14px] font-bold text-gray-600">גולן סולאר</span>
+                    <span className="block text-[10px] text-gray-400">מחויבים לרווח שלך</span>
+                </div>
+            </div>
+        );
+
+        // --- ווידג'טים לממשק הטכנאי ---
+        const LocationWidget = () => {
+            const [data, setData] = useState(null);
+            const [loading, setLoading] = useState(false);
+            const [error, setError] = useState('');
+            const [copied, setCopied] = useState(false);
+
+            const getLocation = () => {
+                setLoading(true); setError(''); setData(null); setCopied(false);
+                if (!navigator.geolocation) {
+                    setError('הדפדפן לא תומך בקבלת מיקום.'); setLoading(false); return;
+                }
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        const utm = latLonToUTM(pos.coords.latitude, pos.coords.longitude);
+                        setData({ utm, altitude: pos.coords.altitude });
+                        setLoading(false);
+                    },
+                    (err) => {
+                        setError('שגיאה בקבלת המיקום. ודא שה-GPS פועל במכשיר.');
+                        setLoading(false);
+                    },
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                );
+            };
+
+            const handleCopy = () => {
+                if(!data) return;
+                const text = `נ.צ UTM: ${data.utm.zone}${data.utm.letter} | X: ${data.utm.easting.toFixed(2)} | Y: ${data.utm.northing.toFixed(2)}${data.altitude ? ` | גובה: ${data.altitude.toFixed(2)}מ'` : ''}`;
+                try {
+                    const tempInput = document.createElement("textarea");
+                    tempInput.value = text;
+                    document.body.appendChild(tempInput);
+                    tempInput.select();
+                    document.execCommand("copy");
+                    document.body.removeChild(tempInput);
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                } catch(e) {
+                    console.error("Copy failed", e);
+                }
+            };
+
+            return (
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 mb-4 mx-4">
+                    <button onClick={getLocation} disabled={loading} className="w-full bg-blue-50 text-blue-600 font-bold py-3 rounded-xl border border-blue-100 active:scale-95 transition-all flex justify-center items-center gap-2">
+                        <Icons.MapPin size={18} />
+                        {loading ? 'מאתר מיקום מדויק...' : 'דגום נ.צ וגובה (UTM)'}
+                    </button>
+                    {error && <div className="text-red-500 text-sm mt-3 text-center font-medium">{error}</div>}
+                    {data && (
+                        <div className="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-100 relative fade-in">
+                            <button onClick={handleCopy} className={`absolute top-3 left-3 p-2 rounded-lg transition-colors flex items-center gap-1 text-xs font-bold ${copied ? 'bg-green-100 text-green-700' : 'bg-white text-slate-500 shadow-sm border border-slate-200 active:scale-95'}`}>
+                                {copied ? <><Icons.CheckCircle2 size={14} /> הועתק</> : <><Icons.Copy size={14} /> העתק</>}
+                            </button>
+                            <div className="text-right pr-2">
+                                <div className="text-sm text-slate-500 font-bold mb-2">נתוני מיקום נוכחי:</div>
+                                <div className="text-slate-700 font-mono text-sm dir-ltr text-right leading-relaxed">
+                                    Zone: <strong>{data.utm.zone}{data.utm.letter}</strong> <br/>
+                                    E (X): <strong>{data.utm.easting.toFixed(2)}</strong> <br/>
+                                    N (Y): <strong>{data.utm.northing.toFixed(2)}</strong>
+                                </div>
+                                <div className="text-sm mt-3 font-bold text-slate-600 border-t border-slate-200 pt-2 inline-block min-w-[50%]">
+                                    גובה: {data.altitude !== null ? <span className="text-emerald-600">{data.altitude.toFixed(2)} מטר</span> : 'לא זמין במכשיר זה'}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const ConverterWidget = () => {
+            const [inputValue, setInputValue] = useState('');
+            const [metricOption, setMetricOption] = useState('m');
+            const [imperialOption, setImperialOption] = useState('ft');
+            const [isMetricFirst, setIsMetricFirst] = useState(true);
+
+            const handleSwap = () => setIsMetricFirst(!isMetricFirst);
+
+            const fromUnit = isMetricFirst ? metricOption : imperialOption;
+            const toUnit = isMetricFirst ? imperialOption : metricOption;
+
+            const getConvertedValue = (val, from, to) => {
+                if (!val) return '';
+                const num = parseFloat(val);
+                if (isNaN(num)) return '';
+                let meters = 0;
+                if (from === 'm') meters = num;
+                if (from === 'km') meters = num * 1000;
+                if (from === 'ft') meters = num / 3.28084;
+                if (from === 'mi') meters = num / 0.000621371;
+
+                let result = 0;
+                if (to === 'm') result = meters;
+                if (to === 'km') result = meters / 1000;
+                if (to === 'ft') result = meters * 3.28084;
+                if (to === 'mi') result = meters * 0.000621371;
+
+                return Number.isInteger(result) ? result.toString() : result.toFixed(2);
+            };
+
+            const resultValue = getConvertedValue(inputValue, fromUnit, toUnit);
+
+            return (
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 mb-6 mx-4 fade-in">
+                    <div className="text-sm font-bold text-slate-500 mb-3 flex items-center gap-2">
+                        <Icons.Calculator size={16}/> מחשבון המרות שטח
+                    </div>
+                    <div className="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <div className="flex flex-col gap-2 w-[42%]">
+                            <input type="number" value={inputValue} onChange={e => setInputValue(e.target.value)} placeholder="הזן מספר" className="w-full bg-white p-2.5 rounded-lg border border-slate-200 outline-none text-center font-mono text-lg font-bold text-slate-700 shadow-sm" />
+                            <select value={isMetricFirst ? metricOption : imperialOption} onChange={e => isMetricFirst ? setMetricOption(e.target.value) : setImperialOption(e.target.value)} className="w-full bg-white border border-slate-200 rounded-lg p-1.5 text-slate-600 font-bold text-sm outline-none text-center shadow-sm cursor-pointer">
+                                {isMetricFirst ? (
+                                    <><option value="m">מטרים (m)</option><option value="km">קילומטרים (km)</option></>
+                                ) : (
+                                    <><option value="ft">רגל (ft)</option><option value="mi">מייל (mi)</option></>
+                                )}
+                            </select>
+                        </div>
+                        <button onClick={handleSwap} className="bg-white p-2 rounded-full shadow-md border border-slate-200 text-blue-500 hover:bg-blue-50 active:scale-90 transition-all shrink-0 mx-1 z-10" title="החלף כיוון המרה">
+                            <Icons.ArrowRightLeft size={18} />
+                        </button>
+                        <div className="flex flex-col gap-2 w-[42%]">
+                            <div className="w-full bg-white p-2.5 rounded-lg border border-emerald-200 bg-emerald-50 text-center font-mono text-lg font-bold text-emerald-600 truncate min-h-[46px] shadow-sm flex items-center justify-center dir-ltr">
+                                {resultValue || '0.00'}
+                            </div>
+                            <select value={!isMetricFirst ? metricOption : imperialOption} onChange={e => !isMetricFirst ? setMetricOption(e.target.value) : setImperialOption(e.target.value)} className="w-full bg-white border border-slate-200 rounded-lg p-1.5 text-slate-600 font-bold text-sm outline-none text-center shadow-sm cursor-pointer">
+                                {!isMetricFirst ? (
+                                    <><option value="m">מטרים (m)</option><option value="km">קילומטרים (km)</option></>
+                                ) : (
+                                    <><option value="ft">רגל (ft)</option><option value="mi">מייל (mi)</option></>
+                                )}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- קומפוננטת המפה הפנימית (Leaflet) ---
+        const MapPickerModal = ({ onClose, onSelect }) => {
+            const [coords, setCoords] = useState(null);
+
+            useEffect(() => {
+                const map = window.L.map('map-container').setView([32.9, 35.5], 10);
+                
+                window.L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+                    maxZoom: 20,
+                    attribution: '© Google / OpenStreetMap'
+                }).addTo(map);
+
+                const customIcon = window.L.divIcon({
+                    className: 'custom-map-marker',
+                    html: `<div style="color: #ef4444; display:flex; justify-content:center; align-items:center; width:30px; height:30px; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.5));"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="currentColor" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3" fill="white"/></svg></div>`,
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 30]
+                });
+
+                let marker = null;
+                
+                map.on('click', (e) => {
+                    const { lat, lng } = e.latlng;
+                    const coordsStr = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                    setCoords(coordsStr);
+                    
+                    if (marker) map.removeLayer(marker);
+                    marker = window.L.marker([lat, lng], { icon: customIcon }).addTo(map);
+                });
+
+                map.locate({setView: true, maxZoom: 16});
+                map.on('locationfound', (e) => {
+                    // המפה זזה אוטומטית למיקום המשתמש
+                });
+
+                return () => map.remove();
+            }, []);
+
+            return (
+                <div className="fixed inset-0 z-[100] bg-black/90 flex flex-col fade-in">
+                    <div className="bg-white p-4 flex justify-between items-center shrink-0 rounded-t-xl mt-4 mx-2">
+                        <h3 className="font-bold text-lg text-gray-800 flex items-center gap-2">
+                            <Icons.MapPin size={20} className="text-red-500" />
+                            דקור נקודה במפה
+                        </h3>
+                        <button onClick={onClose} className="p-1 bg-gray-100 rounded-lg active:scale-95"><Icons.X size={24} className="text-gray-600" /></button>
+                    </div>
+                    
+                    <div id="map-container" className="flex-1 w-full mx-2 border-x border-gray-200"></div>
+                    
+                    <div className="bg-white p-4 shrink-0 flex justify-between items-center rounded-b-xl mb-4 mx-2 shadow-lg">
+                        <div className="font-mono text-sm dir-ltr text-gray-600 bg-gray-50 px-2 py-1 rounded border border-gray-200">
+                            {coords || 'לחץ במפה לבחירה...'}
+                        </div>
+                        <button 
+                            onClick={() => coords && onSelect(coords)}
+                            className={`px-6 py-3 rounded-lg font-bold text-white transition-all active:scale-95 shadow-md ${coords ? 'bg-blue-600' : 'bg-gray-400 pointer-events-none'}`}
+                        >
+                            שמור מיקום
+                        </button>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- Manager View Component ---
+        const ManagerView = ({ tasks, managerSearch, setManagerSearch, deleteTask, handleEdit, updateStatus, toggleActive, setEditingId, setFormData, setModalOpen, downloadBackup, triggerImport }) => {
+            const filteredTasks = tasks.filter(t => 
+                (t.area && t.area.includes(managerSearch)) ||
+                (t.customer && t.customer.includes(managerSearch)) ||
+                (t.title && t.title.includes(managerSearch))
+            );
+
+            return (
+                <div className="px-4 pb-24 safe-pb fade-in">
+                    <div className="flex justify-between items-center my-6">
+                        <h1 className="text-2xl font-black text-gray-800">מרכז ניהול</h1>
+                        <div className="flex gap-2">
+                            <button onClick={downloadBackup} className="bg-blue-50 text-blue-600 p-2 rounded-full shadow-sm active:scale-95 border border-blue-100" title="שמור גיבוי לקובץ">
+                                <Icons.Download size={20} />
+                            </button>
+                            <label className="bg-green-50 text-green-600 p-2 rounded-full shadow-sm active:scale-95 cursor-pointer border border-green-100" title="טען גיבוי מקובץ">
+                                <Icons.Upload size={20} />
+                                <input type="file" accept=".json" className="hidden" onChange={triggerImport} />
+                            </label>
+                            <span className="bg-gray-200 text-gray-600 px-3 py-1 rounded-full text-sm font-bold flex items-center">{tasks.length}</span>
+                        </div>
+                    </div>
+
+                    <div className="mb-4 relative">
+                        <input 
+                            type="text" 
+                            placeholder="חפש לפי אזור או משימה..." 
+                            value={managerSearch}
+                            onChange={(e) => setManagerSearch(e.target.value)}
+                            className="w-full p-3 pl-10 bg-white border border-gray-100 rounded-xl outline-none focus:border-yellow-400 text-gray-700 shadow-sm transition-colors"
+                        />
+                        <div className="absolute left-3 top-3.5 text-gray-400">
+                            <Icons.Search size={20} />
+                        </div>
+                    </div>
+
+                    <div className="space-y-3">
+                        {filteredTasks.length === 0 && <div className="text-center text-gray-400 py-4">לא נמצאו משימות</div>}
+                        {filteredTasks.map(task => (
+                            <div key={task.id} className={`bg-white p-4 rounded-xl shadow-sm border flex justify-between items-start transition-opacity ${task.isActive ? 'border-gray-100' : 'border-gray-100 opacity-60 bg-gray-50'}`}>
+                                <div className="flex flex-col gap-3 items-start h-full justify-between">
+                                    <div className="flex gap-3 items-center">
+                                        <button onClick={() => deleteTask(task.id)} className="text-red-500 p-2 bg-red-50 rounded-lg"><Icons.Trash2 size={18} /></button>
+                                        <button onClick={() => handleEdit(task)} className="text-yellow-600 p-2 bg-yellow-50 rounded-lg"><Icons.Pencil size={18} /></button>
+                                        
+                                        {task.status === 'completed' && (
+                                            <button 
+                                                onClick={() => updateStatus(task.id, 'pending')} 
+                                                className="text-blue-600 p-2 bg-blue-50 rounded-lg" 
+                                                title="החזר לסטטוס ממתין"
+                                            >
+                                                <Icons.RotateCcw size={18} />
+                                            </button>
+                                        )}
+
+                                        <button 
+                                            onClick={() => toggleActive(task.id)} 
+                                            className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors w-20 text-center ${task.isActive ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-gray-200 text-gray-500 border border-gray-300'}`}
+                                        >
+                                            {task.isActive ? 'פעיל' : 'לא פעיל'}
+                                        </button>
+                                    </div>
+                                    <span className={`px-2 py-0.5 text-xs rounded font-bold ${task.status === 'completed' ? 'bg-green-100 text-green-700' : task.status === 'in-progress' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-600'}`}>
+                                        {task.status === 'pending' ? 'ממתין' : task.status === 'in-progress' ? 'בטיפול' : 'הושלם'}
+                                    </span>
+                                </div>
+                                <div className="flex-1 text-right mr-4">
+                                    <h3 className="font-bold text-lg text-gray-800">{task.customer}</h3>
+                                    <p className="text-gray-600 text-sm font-medium">{task.title}</p>
+                                    {task.area && <span className="text-xs text-blue-500 font-bold block mt-1">{task.area}</span>}
+                                    {!task.isActive && <span className="text-xs text-red-500 font-bold block mt-1">לא מוצג לטכנאי</span>}
+                                    {task.image && <img src={task.image} className="w-16 h-16 rounded-lg object-cover mt-2 border border-gray-200 ml-auto" />}
+                                </div>
+                                <div className="w-1 bg-gray-200 rounded-full h-12 self-center ml-2"></div>
+                            </div>
+                        ))}
+                    </div>
+                    
+                    <button onClick={() => { setEditingId(null); setFormData({ customer: '', contact: '', area: '', address: '', phone: '', description: '', priority: 'normal', image: null }); setModalOpen(true); }} className="fixed bottom-6 left-6 w-16 h-16 golan-gradient rounded-full shadow-lg flex items-center justify-center text-white active:scale-90 transition-transform z-40">
+                        <Icons.Plus size={32} />
+                    </button>
+                </div>
+            );
+        };
+
+        // --- Technician View Component ---
+        const TechnicianView = ({ tasks, updateStatus, setSelectedImage }) => {
+            const activeTasks = tasks.filter(t => t.isActive);
+
+            return (
+                <div className="pb-24 safe-pb fade-in">
+                    <div className="mx-4 mt-4 mb-6 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden golan-gradient">
+                        <div className="relative z-10 flex justify-between items-start">
+                            <div className="flex-1 pl-2">
+                                <h1 className="text-3xl font-extrabold mb-2 leading-tight">מערכת שטח</h1>
+                                <p className="text-white/90 text-lg font-medium leading-snug">שלום טכנאי, משימות פתוחות:</p>
+                            </div>
+                            <div className="bg-white p-2 rounded-xl shadow-sm shrink-0"><Logo size="small" /></div>
+                        </div>
+                    </div>
+
+                    <LocationWidget />
+                    <ConverterWidget />
+
+                    <div className="space-y-4 px-4">
+                        {activeTasks.length === 0 && <div className="text-center text-gray-400 py-10">אין משימות פעילות להצגה</div>}
+                        {activeTasks.map(task => (
+                            <div key={task.id} className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-shadow">
+                                <div className="p-5">
+                                    <div className="flex justify-between items-start mb-3">
+                                        <span className={`px-2 py-1 rounded-lg text-[10px] font-bold border ${task.priority === 'high' ? 'bg-red-50 text-red-600 border-red-100' : 'bg-slate-50 text-slate-600 border-slate-100'}`}>
+                                            {task.priority === 'high' ? 'עדיפות גבוהה' : 'עדיפות רגילה'}
+                                        </span>
+                                    </div>
+
+                                    <div className="flex gap-4 mb-4">
+                                        {task.image && (
+                                            <div className="shrink-0 flex flex-col items-center">
+                                                <span className="text-[10px] font-bold text-slate-400 mb-1">תצ"א -</span>
+                                                <div className="cursor-pointer group relative" onClick={() => setSelectedImage(task.image)}>
+                                                    <img 
+                                                        src={task.image} 
+                                                        className="w-20 h-20 rounded-xl object-cover border border-slate-100 shadow-sm group-active:scale-95 transition-transform" 
+                                                    />
+                                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 rounded-xl transition-colors"></div>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        <div className="flex-1">
+                                            <h3 className="font-bold text-xl text-slate-800 leading-tight mb-1">{task.customer}</h3>
+                                            <h4 className="font-medium text-slate-600 text-sm mb-2">{task.title}</h4>
+                                            
+                                            <div className="mt-2 space-y-1">
+                                                {task.area && <div className="text-sm text-blue-600 font-bold">אזור: {task.area}</div>}
+                                                <div className="inline-flex items-center gap-1 text-slate-400 text-xs font-mono bg-slate-50 px-2 py-1 rounded border border-slate-100 dir-ltr">
+                                                    {task.coordinates} <Icons.MapPin size={10} />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-3 gap-2 mb-4">
+                                        <button onClick={() => window.open(`https://maps.google.com/?q=${task.coordinates}&t=k`, '_blank')} className="flex flex-col items-center justify-center p-3 bg-slate-50 rounded-xl text-slate-600 hover:bg-slate-100 active:scale-95 transition-all border border-slate-100 h-16">
+                                            <Icons.Globe size={20} className="mb-1" />
+                                            <span className="text-[10px] font-bold leading-tight">גוגל מאפס</span>
+                                        </button>
+                                        <button onClick={() => window.open(`https://waze.com/ul?ll=${task.coordinates}&navigate=yes`, '_blank')} className="flex flex-col items-center justify-center p-3 bg-slate-50 rounded-xl text-blue-600 hover:bg-blue-50 active:scale-95 transition-all border border-slate-100 h-16">
+                                            <Icons.Navigation size={20} className="mb-1 -rotate-45" />
+                                            <span className="text-[10px] font-bold leading-tight">Waze</span>
+                                        </button>
+                                        <a href={`tel:${task.contact}`} className="flex flex-col items-center justify-center p-3 bg-slate-50 rounded-xl text-slate-700 hover:bg-slate-100 active:scale-95 transition-all border border-slate-100 h-16">
+                                            <Icons.Phone size={20} className="mb-1" />
+                                            <span className="text-[10px] font-bold leading-tight">חיוג</span>
+                                        </a>
+                                    </div>
+
+                                    {task.status === 'pending' ? (
+                                        <button onClick={() => updateStatus(task.id, 'in-progress')} className="w-full golan-gradient text-white font-bold py-3.5 rounded-xl shadow-md shadow-yellow-500/20 active:scale-[0.98] transition-transform flex items-center justify-center gap-2">
+                                            התחל טיפול במערכת
+                                        </button>
+                                    ) : task.status === 'in-progress' ? (
+                                        <button onClick={() => updateStatus(task.id, 'completed')} className="w-full bg-emerald-500 text-white font-bold py-3.5 rounded-xl shadow-md shadow-emerald-500/20 active:scale-[0.98] transition-transform flex items-center justify-center gap-2">
+                                            סמן כהושלם <Icons.CheckCircle2 size={18} />
+                                        </button>
+                                    ) : (
+                                        <div className="w-full bg-slate-100 text-slate-400 font-bold py-3.5 rounded-xl border border-slate-200 flex items-center justify-center gap-2">
+                                            הושלם <Icons.CheckCircle2 size={18} />
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
+        // --- Knowledge Base View (ניהול ידע) ---
+        const KnowledgeView = ({ knowledgeItems, setKnowledgeItems, setSelectedImage, downloadBackup, triggerImport, showConfirm, showAlert, user }) => {
+            const [search, setSearch] = useState('');
+            const [modalOpen, setModalOpen] = useState(false);
+            const [editingId, setEditingId] = useState(null);
+            const [showMapPicker, setShowMapPicker] = useState(false);
+            const [formData, setFormData] = useState({ locationName: '', coordinates: '', notes: '', image: null, imageUrl: '' });
+            const [isUploadingImage, setIsUploadingImage] = useState(false);
+
+            const filteredItems = knowledgeItems.filter(item => 
+                (item.locationName && item.locationName.includes(search)) ||
+                (item.notes && item.notes.includes(search))
+            );
+
+            const handleSave = () => {
+                if (!formData.locationName) return;
+
+                // אם תמונה בהעלאה - לא לשמור עדיין (כדי שלא יישמר blob זמני)
+                if (isUploadingImage) {
+                    showAlert('התמונה עדיין בהעלאה. המתן רגע ונסה שוב.');
+                    return;
+                }
+
+                // אם יש תמונת preview מסוג blob ואין עדיין URL מהענן – לא שומרים
+                if (formData.image && typeof formData.image === 'string' && formData.image.startsWith('blob:') && !formData.imageUrl) {
+                    showAlert('התמונה עדיין לא נשמרה בענן. המתן לסיום ההעלאה ואז שמור.');
+                    return;
+                }
+
+                // נשמור רק URL אמיתי מהענן, או data: (פולבק מקומי). לא נשמור blob:
+                const finalImage =
+                    (formData.imageUrl && typeof formData.imageUrl === 'string' && formData.imageUrl.length > 0)
+                        ? formData.imageUrl
+                        : (formData.image && typeof formData.image === 'string' && formData.image.startsWith('data:'))
+                            ? formData.image
+                            : null;
+
+                const newItem = {
+                    id: editingId || Date.now().toString(),
+                    locationName: formData.locationName,
+                    coordinates: formData.coordinates,
+                    notes: formData.notes,
+                    image: finalImage,
+                    imageUrl: (formData.imageUrl || ''),
+                    date: new Date().toLocaleDateString('he-IL')
+                };
+
+                if (editingId) {
+                    setKnowledgeItems(prev => prev.map(t => t.id === editingId ? newItem : t));
+                } else {
+                    setKnowledgeItems([newItem, ...knowledgeItems]);
+                }
+                setModalOpen(false);
+                setFormData({ locationName: '', coordinates: '', notes: '', image: null, imageUrl: '' });
+                setEditingId(null);
+            };
+
+            const handleEdit = (item) => {
+                setFormData({ ...item });
+                setEditingId(item.id);
+                setModalOpen(true);
+            };
+
+            const deleteItem = (id) => {
+                showConfirm('למחוק את התיעוד?', () => {
+                    setKnowledgeItems(prev => prev.filter(t => t.id !== id));
+                });
+            };
+
+            const getCurrentLocation = () => {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            setFormData(prev => ({
+                                ...prev,
+                                coordinates: `${position.coords.latitude.toFixed(6)}, ${position.coords.longitude.toFixed(6)}`
+                            }));
+                        }, 
+                        (error) => showAlert('שגיאה בקבלת מיקום. ודא שה-GPS דלוק ויש הרשאה בדפדפן.')
+                    );
+                } else {
+                    showAlert('הדפדפן לא תומך בקבלת מיקום');
+                }
+            };
+
+            const handleImageUpload = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                // Preview מיידי (גם לפני העלאה לענן)
+                try {
+                    const localUrl = URL.createObjectURL(file);
+                    setFormData(prev => ({ ...prev, image: localUrl }));
+                } catch (e) {}
+
+                setIsUploadingImage(true);
+
+                // אם המשתמש מחובר - מעלים ל-Storage ושומרים URL (מסתנכרן בין מכשירים)
+                if (user && window.__fb?.uploadImage) {
+                    try {
+                        const url = await window.__fb.uploadImage(user.uid, file);
+                        setFormData(prev => ({ ...prev, imageUrl: url, image: url }));
+                        setIsUploadingImage(false);
+                        e.target.value = null;
+                        return;
+                    } catch (err) {
+                        console.error('Image upload failed:', err);
+                        setIsUploadingImage(false);
+                        alert('העלאת תמונה נכשלה. ודא שהפעלת Storage ב-Firebase ושכללי האבטחה מאפשרים גישה.');
+                        // נמשיך לפולבק מקומי
+                    }
+                }
+
+                // פולבק מקומי (לא מסתנכרן): שמירה כ-base64
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        const maxWidth = 500;
+                        const scaleSize = maxWidth / img.width;
+                        canvas.width = maxWidth;
+                        canvas.height = img.height * scaleSize;
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        setFormData(prev => ({ ...prev, image: canvas.toDataURL('image/jpeg', 0.5), imageUrl: '' }));
+                        setIsUploadingImage(false);
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);e.target.value = null;
+            };
+
+            return (
+                <div className="px-4 pb-24 safe-pb fade-in">
+                    <div className="flex justify-between items-center my-6">
+                        <h1 className="text-2xl font-black text-gray-800">ניהול ידע - שטח</h1>
+                        <div className="flex gap-2">
+                            <button onClick={downloadBackup} className="bg-blue-50 text-blue-600 p-2 rounded-full shadow-sm active:scale-95 border border-blue-100" title="שמור גיבוי לקובץ">
+                                <Icons.Download size={20} />
+                            </button>
+                            <label className="bg-green-50 text-green-600 p-2 rounded-full shadow-sm active:scale-95 cursor-pointer border border-green-100" title="טען גיבוי מקובץ">
+                                <Icons.Upload size={20} />
+                                <input type="file" accept=".json" className="hidden" onChange={triggerImport} />
+                            </label>
+                            <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-bold flex items-center">{knowledgeItems.length} נקודות</span>
+                        </div>
+                    </div>
+
+                    <div className="mb-4 relative">
+                        <input 
+                            type="text" 
+                            placeholder="חפש לפי עיר, כפר או הערה..." 
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="w-full p-3 pl-10 bg-white border border-gray-100 rounded-xl outline-none focus:border-blue-400 text-gray-700 shadow-sm transition-colors"
+                        />
+                        <div className="absolute left-3 top-3.5 text-gray-400">
+                            <Icons.Search size={20} />
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        {filteredItems.length === 0 && <div className="text-center text-gray-400 py-4">אין נקודות שמורות</div>}
+                        {filteredItems.map(item => (
+                            <div key={item.id} className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-shadow p-5">
+                                <div className="flex justify-between items-start mb-2">
+                                    <h3 className="font-bold text-xl text-slate-800">{item.locationName}</h3>
+                                    <div className="flex gap-2">
+                                        <button onClick={() => deleteItem(item.id)} className="text-red-500 p-1.5 bg-red-50 rounded-lg"><Icons.Trash2 size={16} /></button>
+                                        <button onClick={() => handleEdit(item)} className="text-blue-600 p-1.5 bg-blue-50 rounded-lg"><Icons.Pencil size={16} /></button>
+                                    </div>
+                                </div>
+                                
+                                <div className="text-xs text-gray-400 mb-3">{item.date}</div>
+
+                                <div className="flex gap-4 mb-4">
+                                    {item.image && (
+                                        <div className="shrink-0 cursor-pointer group relative" onClick={() => setSelectedImage(item.image)}>
+                                            <img src={item.image} className="w-24 h-24 rounded-xl object-cover border border-slate-100 shadow-sm group-active:scale-95 transition-transform" />
+                                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 rounded-xl transition-colors"></div>
+                                        </div>
+                                    )}
+                                    <div className="flex-1">
+                                        {item.coordinates && (
+                                            <div onClick={() => window.open(`https://maps.google.com/?q=${item.coordinates}&t=k`)} className="inline-flex items-center gap-1 text-blue-600 text-xs font-mono bg-blue-50 px-2 py-1 rounded border border-blue-100 dir-ltr mb-2 cursor-pointer active:scale-95">
+                                                {item.coordinates} <Icons.MapPin size={12} />
+                                            </div>
+                                        )}
+                                        <p className="text-gray-600 text-sm whitespace-pre-wrap">{item.notes}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <button onClick={() => { setEditingId(null); setFormData({ locationName: '', coordinates: '', notes: '', image: null, imageUrl: '' }); setModalOpen(true); }} className="fixed bottom-6 left-6 w-16 h-16 bg-blue-500 rounded-full shadow-lg flex items-center justify-center text-white active:scale-90 transition-transform z-40">
+                        <Icons.Plus size={32} />
+                    </button>
+
+                    {/* מודל פתיחת תיעוד ידע */}
+                    {modalOpen && (
+                        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm p-0 sm:p-4">
+                            <div className="bg-white w-full max-w-lg rounded-t-3xl sm:rounded-2xl shadow-2xl overflow-hidden modal-anim h-[90vh] sm:h-auto flex flex-col">
+                                <div className="bg-blue-500 p-4 text-white flex justify-between items-center shrink-0">
+                                    <h2 className="text-lg font-bold flex items-center gap-2">
+                                        <Icons.Book size={20} /> 
+                                        {editingId ? 'עריכת נקודת המראה' : 'תיעוד נקודת המראה חדשה'}
+                                    </h2>
+                                    <button onClick={() => setModalOpen(false)} className="text-white/80"><Icons.X size={24} /></button>
+                                </div>
+                                <div className="p-5 space-y-4 overflow-y-auto flex-1">
+                                    <input type="text" placeholder="עיר / כפר (לדוגמה: מג'דל שמס)" value={formData.locationName} onChange={e => setFormData({...formData, locationName: e.target.value})} className="w-full p-3 border-b border-gray-200 outline-none text-right bg-transparent placeholder-gray-400 font-bold" />
+                                    
+                                    <div className="flex gap-2">
+                                        <input type="text" placeholder="נ.צ. במפה" value={formData.coordinates} onChange={e => setFormData({...formData, coordinates: e.target.value})} className="flex-1 p-3 border-b border-gray-200 outline-none text-right bg-transparent placeholder-gray-400 dir-ltr" />
+                                        <button onClick={getCurrentLocation} className="p-3 bg-blue-50 text-blue-600 rounded-lg flex items-center gap-1 active:scale-95 text-sm font-bold border border-blue-100" title="GPS נוכחי">
+                                            <Icons.Target size={18} /> GPS 
+                                        </button>
+                                        <button onClick={() => setShowMapPicker(true)} className="p-3 bg-gray-50 text-gray-600 rounded-lg flex items-center gap-1 active:scale-95 border border-gray-200 font-bold text-sm" title="בחר מהמפה">
+                                            <Icons.MapPin size={18} /> מפה
+                                        </button>
+                                    </div>
+                                    
+                                    <textarea rows="4" placeholder="הערות חשובות (איפה חונים, סכנות, כיווני רוח...)" value={formData.notes} onChange={e => setFormData({...formData, notes: e.target.value})} className="w-full p-3 bg-gray-50 rounded-lg border border-gray-100 outline-none resize-none"></textarea>
+                                    
+                                    <div>
+                                        <label className="flex items-center gap-2 text-sm font-bold text-gray-600 mb-2"><Icons.Image size={16}/> תמונת השטח</label>
+                                        <label className="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col items-center justify-center text-gray-400 cursor-pointer hover:bg-gray-50">
+                                            {(formData.imageUrl || formData.image) ? <img src={formData.imageUrl || formData.image} className="h-20 object-contain" /> : <><span>{isUploadingImage ? 'מעלה תמונה…' : 'לחץ להעלאה'}</span></>}
+                                            <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+                                        </label>
+                                    </div>
+                                </div>
+                                <div className="p-4 border-t border-gray-100 shrink-0">
+                                    <button onClick={handleSave} disabled={isUploadingImage} className="w-full bg-blue-500 text-white py-4 rounded-xl font-bold text-lg shadow-lg flex items-center justify-center gap-2">
+                                        שמור תיעוד
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    
+                    {/* חלון המפה הפנימית */}
+                    {showMapPicker && (
+                        <MapPickerModal 
+                            onClose={() => setShowMapPicker(false)} 
+                            onSelect={(c) => { setFormData({...formData, coordinates: c}); setShowMapPicker(false); }} 
+                        />
+                    )}
+                </div>
+            );
+        };
+
+        // --- אפליקציה ראשית ---
+        function App() {
+            // טעינת משימות: מחפש גם במפתח שהיה בקובץ המקורי שלך (golan_tasks_v2) כדי לא לאבד נתונים
+            const [tasks, setTasks] = useState(() => {
+                const keys = ['golan_data_final', 'golan_tablet_db_v7', 'golan_tablet_db_v6', 'golan_tasks_v2', 'golan_tablet_db_v5', 'golan_tablet_db'];
+                let foundData = null;
+                for (let key of keys) {
+                    const data = localStorage.getItem(key);
+                    if (data) { foundData = JSON.parse(data); break; }
+                }
+                return foundData || [];
+            });
+
+            const [knowledgeItems, setKnowledgeItems] = useState(() => {
+                const saved = localStorage.getItem('golan_knowledge_v1');
+                return saved ? JSON.parse(saved) : [];
+            });
+
+            const [role, setRole] = useState(() => localStorage.getItem('golan_role') || 'technician');
+            const [user, setUser] = useState(null);
+            const [cloudLoaded, setCloudLoaded] = useState(false);
+
+            const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+            // התחברות (Google) + טעינת נתונים מהענן
+            useEffect(() => {
+                (async () => {
+                    try {
+                        const u = await window.__fb?.waitForUser?.();
+                        if (u) setUser(u);
+                    } catch (e) {
+                        console.error('Firebase auth init failed:', e);
+                    }
+                })();
+            }, []);
+
+            const handleLogin = async () => {
+                try {
+                    const u = await window.__fb.loginWithGoogle();
+                    setUser(u);
+                } catch (e) {
+                    console.error('Google login failed:', e);
+                    alert('התחברות נכשלה. בדוק שהפעלת Google Sign-In ב-Firebase Authentication.');
+                }
+            };
+
+            useEffect(() => {
+                if (!user || cloudLoaded) return;
+                (async () => {
+                    try {
+                        const data = await window.__fb.cloudLoad(user.uid);
+                        if (data?.tasks) setTasks(data.tasks);
+                        if (data?.knowledgeItems) setKnowledgeItems(data.knowledgeItems);
+                        if (data?.role) setRole(data.role);
+                    } catch (e) {
+                        console.error('Cloud load failed:', e);
+                    } finally {
+                        setCloudLoaded(true);
+                    }
+                })();
+            }, [user, cloudLoaded]);
+
+            const [modalOpen, setModalOpen] = useState(false);
+            const [editingId, setEditingId] = useState(null);
+            const [selectedImage, setSelectedImage] = useState(null);
+            const [managerSearch, setManagerSearch] = useState('');
+            const [showMapPicker, setShowMapPicker] = useState(false);
+            
+            // סטייט לניהול התראות קופצות חלופיות
+            const [dialog, setDialog] = useState(null);
+            
+            const [formData, setFormData] = useState({
+                customer: '', contact: '', area: '', address: '', phone: '', description: '', priority: 'normal', image: null
+            });
+
+            // שמירות אוטומטיות (מקומי + ענן)
+            useEffect(() => { localStorage.setItem('golan_data_final', JSON.stringify(tasks)); }, [tasks]);
+            useEffect(() => { localStorage.setItem('golan_knowledge_v1', JSON.stringify(knowledgeItems)); }, [knowledgeItems]);
+            useEffect(() => { localStorage.setItem('golan_role', role); }, [role]);
+
+            // שמירה לענן (רק אחרי שטענו מהענן כדי לא לדרוס אותו עם מצב ריק)
+            useEffect(() => {
+                if (!user || !cloudLoaded) return;
+                const t = setTimeout(() => {
+                    window.__fb.cloudSave(user.uid, {
+                        tasks,
+                        knowledgeItems,
+                        role,
+                        updatedAt: Date.now()
+                    }).catch((e) => console.error('Cloud save failed:', e));
+                }, 500);
+                return () => clearTimeout(t);
+            }, [tasks, knowledgeItems, role, user, cloudLoaded]);
+
+            // סגירת תפריט בקליק מחוץ לו
+            const menuRef = useRef();
+            useEffect(() => {
+                const handleClickOutside = (event) => {
+                    if (menuRef.current && !menuRef.current.contains(event.target)) {
+                        setIsMenuOpen(false);
+                    }
+                };
+                document.addEventListener("mousedown", handleClickOutside);
+                return () => document.removeEventListener("mousedown", handleClickOutside);
+            }, [menuRef]);
+
+            const showConfirm = (message, onConfirm) => setDialog({ message, onConfirm, type: 'confirm' });
+            const showAlert = (message) => setDialog({ message, type: 'alert' });
+
+            const handleEditTask = (task) => {
+                setFormData({
+                    customer: task.customer, contact: '', area: task.area || '', address: task.coordinates,
+                    phone: task.contact, description: task.title, priority: task.priority, image: task.image
+                });
+                setEditingId(task.id);
+                setModalOpen(true);
+            };
+
+            const handleSaveTask = () => {
+                if (!formData.customer) return;
+                const taskData = {
+                    customer: formData.customer, title: formData.description || 'קריאה חדשה',
+                    area: formData.area || 'כללי', coordinates: formData.address || '32.000, 35.000',
+                    contact: formData.phone, priority: formData.priority, image: formData.image
+                };
+                if (editingId) {
+                    setTasks(prev => prev.map(t => t.id === editingId ? { ...t, ...taskData } : t));
+                } else {
+                    setTasks([{ id: Date.now().toString(), ...taskData, status: 'pending', isActive: true }, ...tasks]);
+                }
+                setFormData({ customer: '', contact: '', area: '', address: '', phone: '', description: '', priority: 'normal', image: null });
+                setEditingId(null);
+                setModalOpen(false);
+            };
+
+            const downloadBackup = () => {
+                const data = { tasks: tasks, knowledge: knowledgeItems };
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
+                const downloadAnchorNode = document.createElement('a');
+                downloadAnchorNode.setAttribute("href", dataStr);
+                downloadAnchorNode.setAttribute("download", "golan_backup_" + new Date().toISOString().slice(0,10) + ".json");
+                document.body.appendChild(downloadAnchorNode);
+                downloadAnchorNode.click();
+                downloadAnchorNode.remove();
+            };
+
+            const triggerImport = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const imported = JSON.parse(event.target.result);
+                        if (imported.tasks || imported.knowledge || Array.isArray(imported)) {
+                            showConfirm("קובץ תקין. לשחזר נתונים?", () => {
+                                if(imported.tasks || imported.knowledge) {
+                                    if(imported.tasks) setTasks(imported.tasks);
+                                    if(imported.knowledge) setKnowledgeItems(imported.knowledge);
+                                } else {
+                                    setTasks(imported); 
+                                }
+                            });
+                        } else {
+                            showAlert("הקובץ אינו מכיל נתונים הנתמכים במערכת זו.");
+                        }
+                    } catch(err) { showAlert("שגיאה בקריאת הקובץ. ודא שזהו קובץ תקין."); }
+                    e.target.value = null; // לאפשר העלאה מחדש של אותו הקובץ
+                };
+                reader.readAsText(file);
+            };
+
+            const handleImageUpload = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            const ctx = canvas.getContext('2d');
+                            const maxWidth = 500; 
+                            const scaleSize = maxWidth / img.width;
+                            canvas.width = maxWidth;
+                            canvas.height = img.height * scaleSize;
+                            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                            setFormData(prev => ({ ...prev, image: canvas.toDataURL('image/jpeg', 0.5) }));
+                        }
+                        img.src = event.target.result;
+                    }
+                    reader.readAsDataURL(file);
+                }
+            };
+
+            return (
+                <div className="min-h-screen bg-[#F8FAFC]">
+                    <div className="bg-white px-4 py-2 border-b-2 border-yellow-400 flex justify-between items-center sticky top-0 z-40">
+                        {/* צד ימין - לוגו וטקסט */}
+                        <div className="flex items-center gap-3">
+                             <Logo size="small" />
+                             <div className="w-px h-6 bg-gray-200 hidden sm:block"></div>
+                             <span className="text-gray-400 font-medium text-xs hidden sm:block">מחויבים לרווח שלנו</span>
+                        </div>
+
+                        {/* צד שמאל - תפריט ממשקים נפתח */}
+                        <div className="flex items-center gap-2" ref={menuRef}>
+                            
+                            {!user ? (
+                                <button onClick={handleLogin} className="px-3 py-1.5 rounded-xl bg-blue-600 text-white text-xs font-bold shadow-sm">
+                                    התחבר
+                                </button>
+                            ) : (
+                                <span className="text-xs font-bold text-green-600">מחובר</span>
+                            )}
+                            <div className="relative">
+                                <button 
+                                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                                    className="flex items-center gap-1 bg-yellow-50 border border-yellow-200 px-3 py-1.5 rounded-lg text-sm font-bold text-gray-700 active:scale-95 transition-transform"
+                                >
+                                    {role === 'manager' ? 'ממשק מנהל' : role === 'technician' ? 'ממשק טכנאי' : 'ניהול ידע'}
+                                    <Icons.ChevronDown size={14}/>
+                                </button>
+                                
+                                {isMenuOpen && (
+                                    <div className="absolute top-full left-0 mt-2 w-40 bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden flex flex-col text-right">
+                                        <button onClick={() => {setRole('manager'); setIsMenuOpen(false);}} className={`px-4 py-3 text-sm font-bold border-b border-gray-50 active:bg-gray-50 ${role === 'manager' ? 'text-yellow-600 bg-yellow-50/50' : 'text-gray-700'}`}>ממשק מנהל</button>
+                                        <button onClick={() => {setRole('technician'); setIsMenuOpen(false);}} className={`px-4 py-3 text-sm font-bold border-b border-gray-50 active:bg-gray-50 ${role === 'technician' ? 'text-yellow-600 bg-yellow-50/50' : 'text-gray-700'}`}>ממשק טכנאי</button>
+                                        <button onClick={() => {setRole('knowledge'); setIsMenuOpen(false);}} className={`px-4 py-3 text-sm font-bold active:bg-gray-50 ${role === 'knowledge' ? 'text-blue-600 bg-blue-50/50' : 'text-gray-700'}`}>ניהול ידע</button>
+                                    </div>
+                                )}
+                            </div>
+                            <button className="text-gray-400 p-1"><Icons.User size={20}/></button>
+                        </div>
+                    </div>
+
+                    {/* ניתוב הממשקים */}
+                    {role === 'technician' && (
+                        <TechnicianView 
+                            tasks={tasks} 
+                            updateStatus={(id, s) => setTasks(tasks.map(t => t.id === id ? {...t, status: s} : t))} 
+                            setSelectedImage={setSelectedImage} 
+                        />
+                    )}
+                    
+                    {role === 'manager' && (
+                        <ManagerView 
+                            tasks={tasks} 
+                            managerSearch={managerSearch} 
+                            setManagerSearch={setManagerSearch} 
+                            deleteTask={(id) => showConfirm('למחוק את המשימה?', () => setTasks(tasks.filter(t=>t.id!==id)))} 
+                            handleEdit={handleEditTask} 
+                            updateStatus={(id, s) => setTasks(tasks.map(t => t.id === id ? {...t, status: s} : t))} 
+                            toggleActive={(id) => setTasks(tasks.map(t => t.id === id ? {...t, isActive: !t.isActive} : t))} 
+                            setEditingId={setEditingId} 
+                            setFormData={setFormData} 
+                            setModalOpen={setModalOpen}
+                            downloadBackup={downloadBackup}
+                            triggerImport={triggerImport}
+                        />
+                    )}
+
+                    {role === 'knowledge' && (
+                        <KnowledgeView 
+                            knowledgeItems={knowledgeItems}
+                            setKnowledgeItems={setKnowledgeItems}
+                            setSelectedImage={setSelectedImage}
+                            downloadBackup={downloadBackup}
+                            triggerImport={triggerImport}
+                            showConfirm={showConfirm}
+                            showAlert={showAlert}
+                        user={user}
+                        />
+                    )}
+
+                    {/* מודל פתיחת קריאת שירות (מנהל) */}
+                    {modalOpen && role === 'manager' && (
+                        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm p-0 sm:p-4">
+                            <div className="bg-white w-full max-w-lg rounded-t-3xl sm:rounded-2xl shadow-2xl overflow-hidden modal-anim h-[90vh] sm:h-auto flex flex-col">
+                                <div className="golan-gradient p-4 text-white flex justify-between items-center shrink-0">
+                                    <h2 className="text-lg font-bold flex items-center gap-2">
+                                        <span className="bg-white/20 p-1 rounded"><Logo size="small"/></span> 
+                                        {editingId ? 'עריכת קריאת שירות' : 'פתיחת קריאה'}
+                                    </h2>
+                                    <button onClick={() => setModalOpen(false)} className="text-white/80 hover:text-white"><Icons.X size={24} /></button>
+                                </div>
+                                <div className="p-5 space-y-4 overflow-y-auto flex-1">
+                                    <input type="text" placeholder="משימה" value={formData.customer} onChange={e => setFormData({...formData, customer: e.target.value})} className="w-full p-3 border-b border-gray-200 outline-none text-right bg-transparent placeholder-gray-400 font-bold" />
+                                    <input type="text" placeholder="אזור (למשל: רמת הגולן)" value={formData.area} onChange={e => setFormData({...formData, area: e.target.value})} className="w-full p-3 border-b border-gray-200 outline-none text-right bg-transparent placeholder-gray-400" />
+                                    
+                                    <div className="flex gap-2">
+                                        <input type="text" placeholder="נ.צ / כתובת מדויקת לניווט" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} className="flex-1 p-3 border-b border-gray-200 outline-none text-right bg-transparent placeholder-gray-400 dir-ltr" />
+                                        <button onClick={() => setShowMapPicker(true)} className="p-3 bg-gray-50 text-gray-600 rounded-lg flex items-center gap-1 active:scale-95 border border-gray-200 font-bold text-sm" title="בחר מהמפה">
+                                            <Icons.MapPin size={18} /> מפה
+                                        </button>
+                                    </div>
+                                    
+                                    <div className="flex gap-4">
+                                        <input type="tel" placeholder="טלפון" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-1/2 p-3 border-b border-gray-200 outline-none text-right bg-transparent placeholder-gray-400" />
+                                        <select value={formData.priority} onChange={e => setFormData({...formData, priority: e.target.value})} className="w-1/2 p-3 border-b border-gray-200 outline-none text-gray-600 bg-transparent">
+                                            <option value="normal">עדיפות רגילה</option>
+                                            <option value="high">עדיפות גבוהה</option>
+                                        </select>
+                                    </div>
+                                    <textarea rows="3" placeholder="תיאור התקלה..." value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full p-3 bg-gray-50 rounded-lg border border-gray-100 outline-none resize-none"></textarea>
+                                    <div>
+                                        <label className="flex items-center gap-2 text-sm font-bold text-gray-600 mb-2"><Icons.Image size={16}/> תמונות</label>
+                                        <label className="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col items-center justify-center text-gray-400 cursor-pointer hover:bg-gray-50">
+                                            {(formData.imageUrl || formData.image) ? <img src={formData.imageUrl || formData.image} className="h-20 object-contain" /> : <><span>{isUploadingImage ? 'מעלה תמונה…' : 'לחץ להעלאה'}</span></>}
+                                            <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+                                        </label>
+                                    </div>
+                                </div>
+                                <div className="p-4 border-t border-gray-100 shrink-0">
+                                    <button onClick={handleSaveTask} className="w-full golan-gradient text-white py-4 rounded-xl font-bold text-lg shadow-lg flex items-center justify-center gap-2">
+                                        {editingId ? 'שמור שינויים' : 'שלח קריאה'}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* חלון המפה הפנימית לבחירת קואורדינטות (משותף למנהל ולידע) */}
+                    {showMapPicker && (
+                        <MapPickerModal 
+                            onClose={() => setShowMapPicker(false)} 
+                            onSelect={(c) => { setFormData({...formData, address: c, coordinates: c}); setShowMapPicker(false); }} 
+                        />
+                    )}
+
+                    {/* מודל הגדלת תמונה גלובלי */}
+                    {selectedImage && (
+                        <div 
+                            className="fixed inset-0 z-[60] bg-black/90 flex items-center justify-center p-4 fade-in"
+                            onClick={() => setSelectedImage(null)}
+                        >
+                            <button 
+                                onClick={() => setSelectedImage(null)}
+                                className="absolute top-6 right-6 text-white/80 bg-white/10 rounded-full p-2 hover:bg-white/20"
+                            >
+                                <Icons.X size={32} />
+                            </button>
+                            <img 
+                                src={selectedImage} 
+                                className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl" 
+                                onClick={(e) => e.stopPropagation()} 
+                            />
+                        </div>
+                    )}
+
+                    {/* מודל התראות / אישורים גלובלי */}
+                    <CustomDialog dialog={dialog} onClose={() => setDialog(null)} />
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
